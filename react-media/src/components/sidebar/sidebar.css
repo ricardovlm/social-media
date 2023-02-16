@@ -55,3 +55,21 @@
     margin: 0;
     list-style: none;
 }
+
+.sidebarFriend {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    padding-left: 0;
+}
+
+.sidebarFriendImg {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+    padding-right: 10px;
+
+}
+
+.sideberFrienName {}

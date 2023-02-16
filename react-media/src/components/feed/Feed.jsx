@@ -1,10 +1,20 @@
 import React from 'react'
+import Post from '../post/Post'
+import Share from '../share/Share'
 import './feed.css'
+import { Posts } from '../../dummyData'
 
 const Feed = () => {
     return (
         <div className='feed'>
-            Feed
+            <div className="feedWrapper">
+                <Share />
+                {Posts.map((post) => (
+                    <Post
+                        key={post.id}
+                        post={post} />
+                ))}
+            </div>
         </div>
     )
 }
