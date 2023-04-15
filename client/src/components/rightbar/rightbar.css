@@ -131,3 +131,15 @@
     object-fit: cover;
     border-radius: 5px;
 }
+
+.rightbaFollowButton{
+    margin-top: 30px;
+    margin-bottom: 10px;
+    border: none;
+    background-color: blue;
+    color:white;
+    padding: 5px 10px;
+    display: flex;
+    align-items: center;
+
+}

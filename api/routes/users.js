@@ -1,20 +1,25 @@
 const router = require('express').Router()
 const bcrypt = require('bcrypt');
-const { response } = require('express');
+const { response, json } = require('express');
 const User = require('../models/User')
 
 // get User
-router.get("/:id", async (req, res) => {
+router.get("/", async (req, res) => {
+    const userId = req.query.userId
+    const username = req.query.username
+
     try {
 
-        console.log(req.params.id);
-        const user = await User.findById(req.params.id)
+        const user = userId
+            ? await User.findById(userId)
+            : await User.findOne({ username: username })
         // no se trae el password ni el updateAt del usuario
         const { password, updateAt, ...other } = user._doc
-        res.status(200).json(other)
+        console.log(user._doc);
+        res.status(200).json(user._doc)
 
-    } catch {
-
+    } catch (error) {
+        res.status(500).json(error);
     }
 })
 // update User
@@ -60,6 +65,29 @@ router.delete('/:id', async (req, res) => {
         }
     } else {
         res.status(403).json('You cant delete only your account')
+    }
+
+})
+
+// get friends
+
+router.get("/friends/:userId", async (req, res) => {
+    try {
+        const user = await User.findById(req.params.userId)
+        const friends = await Promise.all(
+            user.followings.map(friendId => {
+                return User.findById(friendId)
+            })
+        )
+        let friendList = []
+        friends.map((friend) => {
+            const { _id, username, profilePicture } = friend
+            friendList.push({ _id, username, profilePicture })
+        })
+        res.status(200).json(friendList)
+
+    } catch (error) {
+        res.status(500), json(error)
     }
 
 })
@@ -112,12 +140,6 @@ router.put("/:id/unfollow", async (req, res) => {
         res.status(403).json("You cant unfollow yourself")
     }
 })
-
-
-router.get('/', (req, res) => {
-    res.send('Welcome to user page')
-})
-
 
 
 module.exports = router

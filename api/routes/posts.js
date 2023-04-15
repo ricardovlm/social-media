@@ -9,7 +9,7 @@ router.get("/", (req, res) => {
 
 
 // create a post
-router.put("/", async (req, res) => {
+router.post("/", async (req, res) => {
 
     const newPost = new Post(req.body)
     try {
@@ -90,29 +90,35 @@ router.get('/:id', async (req, res) => {
 })
 
 // get Timeline
-router.get('/timeline/all', async (req, res) => {
+router.get('/timeline/:userId', async (req, res) => {
 
     try {
-        const currentUser = await User.findById(req.body.userId)
+        const currentUser = await User.findById(req.params.userId)
         const userPost = await Post.find({ userId: currentUser._id })
         const friendPosts = await Promise.all(
             currentUser.followings.map((friendId) => {
                 return Post.find({ userId: friendId })
             })
         )
-        res.json(userPost.concat(...friendPosts))
-
-
+        res.status(200).json(userPost.concat(...friendPosts))
     } catch (error) {
         res.status(500).json(error)
     }
 })
 
+// get User all post
+router.get('/profile/:username', async (req, res) => {
 
-
-router.get(("/posts/:id"), (req, res) => {
-
+    try {
+        const user = await User.findOne({ username: req.params.username })
+        console.log(user);
+        const posts = await Post.find({ userId: user._id })
+        res.status(200).json(posts)
+    } catch (error) {
+        res.status(500).json(error)
+    }
 })
+
 
 
 module.exports = router
